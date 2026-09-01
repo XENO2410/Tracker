@@ -51,6 +51,7 @@ export interface WorkoutSet {
 export interface WorkoutExercise {
   exercise: string;
   sets: WorkoutSet[];
+  notes?: string | null;
 }
 
 export interface WorkoutLog {

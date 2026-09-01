@@ -87,10 +87,11 @@ def log_workout(body: WorkoutLog, sc: SheetsClient = Depends(get_sheets_client))
     ts = _ts()
     count = 0
     for ex in body.exercises:
+        row_notes = ex.notes or body.notes
         for st in ex.sets:
             sc.append_row("Workout_Log", [
                 ts, d, body.split, ex.exercise, st.set_number,
-                st.weight_kg, st.reps, st.rir, st.is_bodyweight, body.notes,
+                st.weight_kg, st.reps, st.rir, st.is_bodyweight, row_notes,
             ])
             count += 1
     return {"sets_logged": count, "exercises": len(body.exercises)}

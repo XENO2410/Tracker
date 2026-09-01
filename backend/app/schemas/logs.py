@@ -83,6 +83,7 @@ class WorkoutSet(BaseModel):
 class WorkoutExercise(BaseModel):
     exercise: str
     sets: list[WorkoutSet]
+    notes: str | None = None
 
 
 class WorkoutLog(BaseModel):

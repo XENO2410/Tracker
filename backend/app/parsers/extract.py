@@ -48,7 +48,7 @@ activity -> {"activity_type": str, "duration_min": int|null,
 
 workout -> {
   "split": null | str (e.g. "Push","Pull","Legs","Upper","Lower","Full"),
-  "exercises": [ {"exercise": str, "sets": [
+  "exercises": [ {"exercise": str, "notes": null | str, "sets": [
     {"set_number": int, "weight_kg": float|null, "reps": int,
      "rir": int|null, "is_bodyweight": bool}
   ]}],
@@ -85,6 +85,56 @@ Rules:
     <11:00 breakfast, 11:00-13:00 post-breakfast, 13:00-16:00 lunch,
     16:00-18:00 snack, 18:00-19:30 pre-workout or dinner depending on context,
     >=19:30 dinner. If a [meal=...] hint is prepended to the user message, prefer it.
+
+HEVY WORKOUT FORMAT (very common — recognize automatically):
+If the input contains "@hevyapp" OR looks like:
+    <title line>
+    <weekday, Mon DD, YYYY at H:MMpm/am>
+
+    <Exercise Name (Equipment)>
+    ["optional notes in double-quotes"]
+    Set N: X kg x Y
+    Set N: Y reps          (bodyweight)
+    Set N: 0.7 km - 10min 0s   (cardio)
+    ...
+    @hevyapp
+    <url>
+
+Then treat the ENTIRE message as ONE workout log:
+- log_type: "workout"
+- date: parse from the header (e.g. "Monday, Aug 31, 2026 at 7:20pm" -> "2026-08-31"). If absent, use today.
+- split: null (Hevy doesn't include it). Only fill if the title clearly names a split like "Push Day".
+- notes: use the title line above the date. Append any cardio summaries here (see below).
+  Also append the hevy URL at the very end if present, prefixed with " | src: ".
+- exercises: one entry per exercise block. IMPORTANT:
+    * Preserve the full exercise name including equipment in parens: "Bent Over Row (Dumbbell)".
+    * The double-quoted line right under the exercise name is that exercise's "notes" field.
+    * Each "Set N: X kg x Y" -> {set_number: N, weight_kg: X, reps: Y, rir: null, is_bodyweight: false}
+    * "Set N: Y reps" (no kg) -> {set_number: N, weight_kg: null, reps: Y, rir: null, is_bodyweight: true}
+    * "Set N: 0 kg x Y" (weight literally zero) -> is_bodyweight: true, weight_kg: null, reps: Y
+- Cardio blocks (Treadmill, Bike, Elliptical, Rowing, Stair Master, etc.) where the sets look like
+  "Set N: <distance> km - <duration>":
+    * DO NOT add this as an exercise entry (skip it).
+    * Instead append to workout notes: "Cardio: <name> <distance>km <duration>" (one line per cardio block).
+- Ignore the "@hevyapp" tag itself.
+- Do not invent RIR — Hevy doesn't export it, keep rir: null.
+
+Example (abbreviated):
+Input: 'Push\\nMon, Aug 31, 2026 at 7:20pm\\n\\nBench Press (Barbell)\\n"felt strong"\\nSet 1: 60 kg x 8\\nSet 2: 60 kg x 8\\n@hevyapp'
+Output data:
+{
+  "date": "2026-08-31",
+  "split": null,
+  "notes": "Push",
+  "exercises": [{
+    "exercise": "Bench Press (Barbell)",
+    "notes": "felt strong",
+    "sets": [
+      {"set_number": 1, "weight_kg": 60, "reps": 8, "rir": null, "is_bodyweight": false},
+      {"set_number": 2, "weight_kg": 60, "reps": 8, "rir": null, "is_bodyweight": false}
+    ]
+  }]
+}
 """
 
 PRODUCT_LOCK_INSTRUCTIONS = """

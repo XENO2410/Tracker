@@ -13,6 +13,14 @@ const examples = [
   { label: "Craving", text: "strong craving for misal pav before dinner, didn't eat it" },
   { label: "Treat", text: "had pizza slice for dinner, satisfaction 7/10, worth it yes" },
   { label: "Sleep", text: "slept 4/5, energy 4, stress 2, sore legs 3" },
+  {
+    label: "Hevy paste (whole workout)",
+    text:
+      `Felt better\nMonday, Aug 31, 2026 at 7:20pm\n\n` +
+      `Bent Over Row (Dumbbell)\n"Had it little tough"\n` +
+      `Set 1: 15 kg x 12\nSet 2: 17.5 kg x 12\n\n` +
+      `Chest Press (Machine)\nSet 1: 40 kg x 15\nSet 2: 45 kg x 12\n\n@hevyapp`,
+  },
 ];
 
 export default function QuickLog() {
@@ -36,7 +44,7 @@ export default function QuickLog() {
             {examples.map((e) => (
               <li key={e.text} className="rounded-md border bg-card p-3">
                 <div className="mb-1 text-xs font-medium text-muted-foreground">{e.label}</div>
-                <code className="text-sm">{e.text}</code>
+                <pre className="whitespace-pre-wrap font-mono text-xs leading-snug">{e.text}</pre>
               </li>
             ))}
           </ul>
