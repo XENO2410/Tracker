@@ -1,10 +1,9 @@
-// Typed API client.
-// In development, Vite can use VITE_API_BASE_URL if configured.
-// In production, set VITE_API_BASE_URL to your Render backend URL.
+// Typed API client. All calls go through the current origin.
+// - In dev, Vite's proxy (vite.config.ts) forwards /api and /health to 127.0.0.1:8000.
+// - In prod, vercel.json rewrites /api and /health to the Render backend.
+// You can override with VITE_API_BASE_URL if you ever want to call the backend directly.
 
-const API_BASE_URL = (
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
-).replace(/\/$/, "");
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
 export type LogType =
   | "food"
