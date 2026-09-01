@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: recomp-tracker-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: LLM_PARSE_MODEL
+        value: openai/gpt-4o-mini
+      - key: LLM_REPORT_MODEL
+        value: openai/gpt-4o
+      - key: OPENROUTER_APP_NAME
+        value: Personal Body Recomp Tracker
+      # sync:false = must be set manually in the Render dashboard (secrets)
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: GOOGLE_SPREADSHEET_ID
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
