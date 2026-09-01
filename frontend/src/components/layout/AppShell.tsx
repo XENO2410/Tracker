@@ -54,9 +54,9 @@ export default function AppShell() {
       </aside>
 
       {/* Main */}
-      <main className="mx-auto max-w-5xl px-4 pb-24 pt-6 md:pb-8">
-        {/* Mobile header */}
-        <div className="mb-4 flex items-center justify-between md:hidden">
+      <main className="mx-auto max-w-5xl px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-8">
+        {/* Mobile header — respects notch/status bar */}
+        <div className="safe-pt mb-4 flex items-center justify-between md:hidden">
           <div className="flex items-center gap-2">
             <Activity className="h-5 w-5 text-primary" />
             <span className="text-sm font-semibold tracking-tight">Recomp Tracker</span>
@@ -66,8 +66,8 @@ export default function AppShell() {
         <Outlet />
       </main>
 
-      {/* Bottom nav (mobile) */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t bg-card md:hidden">
+      {/* Bottom nav (mobile) — respects home indicator */}
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t bg-card pb-[env(safe-area-inset-bottom)] md:hidden">
         {nav.slice(0, 5).map(({ to, label, Icon, end }) => (
           <NavLink
             key={to}
@@ -75,7 +75,7 @@ export default function AppShell() {
             end={end}
             className={({ isActive }) =>
               cn(
-                "flex flex-col items-center gap-1 py-2 text-[11px]",
+                "flex min-h-14 flex-col items-center justify-center gap-1 py-2 text-[11px]",
                 isActive ? "text-primary" : "text-muted-foreground",
               )
             }

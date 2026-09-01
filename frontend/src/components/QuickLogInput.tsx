@@ -114,7 +114,7 @@ export default function QuickLogInput({ onLogged, placeholder }: Props) {
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -122,7 +122,7 @@ export default function QuickLogInput({ onLogged, placeholder }: Props) {
             placeholder ??
             "Say anything: '2 idlis and sambar', '750ml water', 'weight 61.4', '3x10 goblet squat @ 20kg'..."
           }
-          className="min-h-[72px]"
+          className="min-h-[96px] flex-1"
           onKeyDown={(e) => {
             if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && text.trim()) {
               e.preventDefault();
@@ -133,7 +133,7 @@ export default function QuickLogInput({ onLogged, placeholder }: Props) {
         <Button
           onClick={() => parseMut.mutate(text)}
           disabled={!text.trim() || parseMut.isPending}
-          className="self-start"
+          className="h-11 w-full sm:h-auto sm:w-auto sm:self-start"
         >
           {parseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
           Parse

@@ -40,39 +40,45 @@ export default function Dashboard() {
           <CardDescription>Don't panic over daily swings. This is what actually matters.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-baseline gap-4">
-            <div className="text-4xl font-bold">
-              {fmtNum(t?.current_7day_avg ?? null, 2)}
-              <span className="ml-1 text-lg text-muted-foreground">kg</span>
+          {t?.current_7day_avg == null ? (
+            <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
+              Log your weight from the <span className="font-medium text-foreground">Body</span> tab to start the trend.
             </div>
-            {t?.change_kg !== null && t?.change_kg !== undefined && (
-              <div className="flex items-center gap-1 text-sm">
-                {t.change_kg < 0 ? (
-                  <ArrowDown className="h-4 w-4 text-success" />
-                ) : t.change_kg > 0 ? (
-                  <ArrowUp className="h-4 w-4 text-destructive" />
-                ) : (
-                  <Minus className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <>
+              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <div className="text-4xl font-bold">
+                  {fmtNum(t.current_7day_avg, 2)}
+                  <span className="ml-1 text-lg text-muted-foreground">kg</span>
+                </div>
+                {t?.change_kg !== null && t?.change_kg !== undefined && (
+                  <div className="flex items-center gap-1 text-sm">
+                    {t.change_kg < 0 ? (
+                      <ArrowDown className="h-4 w-4 text-success" />
+                    ) : t.change_kg > 0 ? (
+                      <ArrowUp className="h-4 w-4 text-destructive" />
+                    ) : (
+                      <Minus className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    <span className={t.change_kg < 0 ? "text-success" : t.change_kg > 0 ? "text-destructive" : ""}>
+                      {t.change_kg > 0 ? "+" : ""}
+                      {fmtNum(t.change_kg, 2)} kg vs previous week
+                    </span>
+                  </div>
                 )}
-                <span className={t.change_kg < 0 ? "text-success" : t.change_kg > 0 ? "text-destructive" : ""}>
-                  {t.change_kg > 0 ? "+" : ""}
-                  {fmtNum(t.change_kg, 2)} kg vs previous week
-                </span>
               </div>
-            )}
-          </div>
 
-          <div className="h-40 w-full">
-            {t?.series && t.series.length > 0 ? (
-              <ResponsiveContainer>
-                <LineChart data={t.series}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={fmtDate}
-                    stroke="hsl(var(--muted-foreground))"
-                    tick={{ fontSize: 11 }}
-                  />
+              <div className="h-40 w-full">
+                {t?.series && t.series.length > 0 ? (
+                  <ResponsiveContainer>
+                    <LineChart data={t.series}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={fmtDate}
+                        stroke="hsl(var(--muted-foreground))"
+                        tick={{ fontSize: 11 }}
+                      />
                   <YAxis
                     domain={["dataMin - 0.5", "dataMax + 0.5"]}
                     stroke="hsl(var(--muted-foreground))"
@@ -109,10 +115,12 @@ export default function Dashboard() {
               </ResponsiveContainer>
             ) : (
               <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                Log your weight to see the trend.
+                Log a couple more days for the chart.
               </div>
             )}
           </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
